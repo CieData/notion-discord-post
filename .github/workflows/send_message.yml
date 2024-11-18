@@ -24,7 +24,20 @@ jobs:
     - name : Install Dependencies 
       run: npm install
     - name : Send Reserved Messages on Notion
-      run : npx tsc && node app.js
+      run : |
+        MAX_RETRIES=10
+        COUNT=0
+        SUCCESS=0
+        while [ $COUNT -lt $MAX_RETRIES ]; do
+          npx tsc && node app.js && SUCCESS=1 && break
+          COUNT=$((COUNT + 1))
+          echo "Attempt $COUNT failed. Retrying in 2 seconds..."
+          sleep 2
+        done
+        if [ $SUCCESS -eq 0 ]; then
+          echo "All attempts failed."
+          exit 1
+        fi
       env : 
         NOTION_TOKEN : ${{secrets.NOTION_TOKEN}}
         LINK_DATABASE_URL : ${{secrets.LINK_DATABASE_URL}}
