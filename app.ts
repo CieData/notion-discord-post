@@ -154,6 +154,7 @@ const sendReservedMessages = async (databaseId:string, webhookUrl:string) => {
         const messageContent = block[blockType].rich_text[0].plain_text;
         // 디스코드 서버에 웹훅으로 메시지 전송
         await sendMessage(webhookUrl,{content:messageContent})
+        console.log(`입력 내용 : ${messageContent}`);
         // 메시지 발송 완료 후 노션 데이터베이스 발송 상태를 발송 완료로 변경
         await notion.pages.update({
           page_id : messagePage.id,
